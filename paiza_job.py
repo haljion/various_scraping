@@ -1,34 +1,30 @@
-import requests
 import re
 import pandas as pd
 import mojimoji as mj
 import chromedriver_binary
 from time import sleep
 from selenium import webdriver
-from bs4 import BeautifulSoup
 
-url = "https://paiza.jp/sign_in"
-email = "yuji.takahashi0613@gmail.com"
-password = "haljion11"
+from const import paiza_const
 
 options = webdriver.ChromeOptions()
 options.add_argument('--headless')
 driver = webdriver.Chrome(options=options)
 
-driver.get(url)
+driver.get(paiza_const.url)
 sleep(3)
 
 email_box = driver.find_element_by_id("email")
 pass_box = driver.find_element_by_id("password")
-email_box.send_keys(email)
-pass_box.send_keys(password)
+email_box.send_keys(paiza_const.email)
+pass_box.send_keys(paiza_const.password)
 driver.find_elements_by_class_name("a-button-primary-large")[0].submit()
 sleep(3)
 
 driver.find_elements_by_link_text("エンジニア求人")[0].click()
 sleep(3)
 
-driver.find_elements_by_link_text("Python3")[-1].click()
+driver.find_elements_by_link_text(paiza_const.language)[-1].click()
 sleep(3)
 
 cur_url = driver.current_url
@@ -124,4 +120,5 @@ df = pd.DataFrame(
         "link"
         ]
 )
-df.to_csv("paiza_job.csv")
+csv_name = f"./output/paiza.job_{paiza_const.language[:2]}.csv"
+df.to_csv(csv_name)
